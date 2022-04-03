@@ -21,7 +21,7 @@ include_directories(
         include
         /usr/local/include)
 
-add_executable(VFRRT main.cpp src/dataset_parser.cpp src/dataset_parser.h)
+add_executable(VFRRT main.cpp src/dataset_parser.cpp src/dataset_parser.h src/ompl_planner.cpp src/ompl_planner.h src/polygonal_obstacles.cpp src/polygonal_obstacles.h)
 target_link_libraries(${PROJECT_NAME}
         ${OMPL_LIBRARY}
         ${OMPLAPP_LIBRARY}

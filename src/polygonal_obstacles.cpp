@@ -18,7 +18,8 @@ ObstclesPtr polygonal_obstacles::get_ptr() {
 vector<polygonal_obstacles::Point> polygonal_obstacles::obstacle_to_points(const polygonal_obstacles::OBS &obs) {
     vector<Point> results;
     results.reserve(obs.first.size());
-    for (int i = 0; i < obs.first.size(); ++i)
+    // last point is not need if it is same as first point
+    for (int i = 0; i < obs.first.size() - 1; ++i)
     {
         results.emplace_back(Point{obs.first[i], obs.second[i]});
     }

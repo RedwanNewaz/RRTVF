@@ -58,3 +58,7 @@ vector<vector<float>> dataset_parser::retrieve_data(int depth_indx, const ROMS_V
     }
     return result;
 }
+
+DatasetPtr dataset_parser::get_ptr() {
+    return shared_from_this();
+}

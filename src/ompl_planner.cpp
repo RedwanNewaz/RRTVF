@@ -47,9 +47,25 @@ void ompl_planner::setup(ObstclesPtr obstacles) {
 
 }
 
-ompl_planner::PATH ompl_planner::get_solution() {
+ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
+
+    //vector field generator
+    auto U = dataset->retrieve_data(depth, UU);
+    auto V = dataset->retrieve_data(depth, VV);
+
+
+    auto vectorField = [=](const ompl::base::State *qnear){
+        auto qnear2D = qnear->as<ob::RealVectorStateSpace::StateType>();
+        auto qnear_u = U[int(qnear2D->values[0])][int(qnear2D->values[1])];
+        auto qnear_v = V[int(qnear2D->values[0])][int(qnear2D->values[1])];
+        Eigen::VectorXd vfield(2);
+        vfield << qnear_u, qnear_v;
+        return vfield;
+    };
+
     // Construct our optimizing planner using the RRTstar algorithm.
-    ob::PlannerPtr optimizingPlanner(new og::RRTstar(si));
+//    ob::PlannerPtr optimizingPlanner(new og::RRTstar(si));
+    ob::PlannerPtr optimizingPlanner(new og::VFRRT(si, vectorField, 0.75, 1, 300));
 
 // Set the problem instance for our planner to solve
     optimizingPlanner->setProblemDefinition(pdef);
@@ -58,7 +74,9 @@ ompl_planner::PATH ompl_planner::get_solution() {
 
 // attempt to solve the planning problem within one second of
 // planning time
-    ob::PlannerStatus solved = optimizingPlanner->solve(1.0);
+    ob::PlannerStatus solved = optimizingPlanner->solve(2.0);
+
+    if(!solved) return {};
 
     // Output the length of the path found
     std::cout
@@ -68,7 +86,7 @@ ompl_planner::PATH ompl_planner::get_solution() {
             << " with an optimization objective value of "
             << pdef->getSolutionPath()->cost(pdef->getOptimizationObjective()) << std::endl;
 
-    pdef->getSolutionPath()->print(cout);
+//    pdef->getSolutionPath()->print(cout);
 
     auto res = pdef->getSolutionPath()->as<og::PathGeometric>();
 
@@ -87,3 +105,4 @@ ompl_planner::PATH ompl_planner::get_solution() {
     }
     return solution;
 }
+

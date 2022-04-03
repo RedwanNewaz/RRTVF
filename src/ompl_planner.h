@@ -17,8 +17,11 @@
 #include <ompl/base/OptimizationObjective.h>
 #include <ompl/geometric/planners/rrt/RRTstar.h>
 #include <ompl/base/objectives/PathLengthOptimizationObjective.h>
+#include "ompl/geometric/planners/rrt/VFRRT.h"
+#include <Eigen/Dense>
 
 #include "polygonal_obstacles.h"
+#include "dataset_parser.h"
 
 namespace ob = ompl::base;
 namespace oc = ompl::control;
@@ -71,6 +74,8 @@ public:
         return sqrt((x-0.5)*(x-0.5) + (y-0.5)*(y-0.5)) - 0.25;
     }
 
+
+
 private:
     ObstclesPtr obstacles_;
 };
@@ -91,7 +96,8 @@ class ompl_planner {
 public:
     ompl_planner(const vector<float> &stat, const vector<float> &goal);
     void setup(ObstclesPtr obstacles);
-    PATH get_solution();
+    PATH get_solution(DatasetPtr dataset, int depth);
+//    static Eigen::VectorXd vectorField(const ompl::base::State *qnear);
 
 private:
     vector<float> start_, goal_;

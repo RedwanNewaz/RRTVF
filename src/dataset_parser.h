@@ -8,6 +8,7 @@
 #include <iostream>
 #include <netcdf>
 #include <vector>
+#include <memory>
 
 using namespace std;
 using namespace netCDF;
@@ -19,8 +20,10 @@ enum ROMS_VAR{
     LON
 };
 
+class dataset_parser;
+typedef shared_ptr<dataset_parser> DatasetPtr;
 
-class dataset_parser {
+class dataset_parser: public enable_shared_from_this<dataset_parser>{
 public:
     dataset_parser(const char *filepath);
     /*
@@ -28,6 +31,8 @@ public:
      * see examples in https://github.com/Unidata/netcdf-cxx4
      */
     bool open();
+
+    DatasetPtr get_ptr();
 
     /*
      * retrieve depth layer wise velocity information

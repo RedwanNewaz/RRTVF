@@ -30,6 +30,29 @@ namespace og = ompl::geometric;
 using namespace std;
 
 
+class ompl_planner {
+    using PATH = pair<vector<float>, vector<float>>;
+public:
+    ompl_planner(const vector<float> &stat, const vector<float> &goal);
+    void setup(ObstclesPtr obstacles);
+    PATH get_solution(DatasetPtr dataset, int depth);
+
+
+private:
+    vector<float> start_, goal_;
+    ob::ProblemDefinitionPtr pdef;
+    ob::SpaceInformationPtr si;
+
+protected:
+    // Returns a structure representing the optimization objective to use
+    // for optimal motion planning. This method returns an objective which
+    // attempts to minimize the length in configuration space of computed
+    // paths.
+    ob::OptimizationObjectivePtr getPathLengthObjective(const ob::SpaceInformationPtr& si);
+};
+
+
+
 // Our collision checker. For this demo, our robot's state space
 // lies in [0,1]x[0,1], with a circular obstacle of radius 0.25
 // centered at (0.5,0.5). Any states lying in this circular region are
@@ -37,70 +60,19 @@ using namespace std;
 class ValidityChecker : public ob::StateValidityChecker
 {
 public:
-    ValidityChecker(const ob::SpaceInformationPtr& si, ObstclesPtr obstacles) :
-            ob::StateValidityChecker(si), obstacles_(std::move(obstacles)) {}
+    ValidityChecker(const ob::SpaceInformationPtr& si, ObstclesPtr obstacles);
 
     // Returns whether the given state's position overlaps the
     // circular obstacle
-    bool isValid(const ob::State* state) const
-    {
-        const auto* state2D =
-                state->as<ob::RealVectorStateSpace::StateType>();
-        auto x = (float) state2D->values[0];
-        auto y = (float) state2D->values[1];
-        return obstacles_->isValidState(x, y);
-    }
-
+    bool isValid(const ob::State* state) const override;
     // Returns the distance from the given state's position to the
     // boundary of the circular obstacle.
-    double clearance(const ob::State* state) const
-    {
-        // We know we're working with a RealVectorStateSpace in this
-        // example, so we downcast state into the specific type.
-        const ob::RealVectorStateSpace::StateType* state2D =
-                state->as<ob::RealVectorStateSpace::StateType>();
-
-        // Extract the robot's (x,y) position from its state
-        double x = state2D->values[0];
-        double y = state2D->values[1];
-
-        // Distance formula between two points, offset by the circle's
-        // radius
-        return sqrt((x-0.5)*(x-0.5) + (y-0.5)*(y-0.5)) - 0.25;
-    }
-
-
+    double clearance(const ob::State* state) const override;
 
 private:
     ObstclesPtr obstacles_;
 };
 
-// Returns a structure representing the optimization objective to use
-// for optimal motion planning. This method returns an objective which
-// attempts to minimize the length in configuration space of computed
-// paths.
-inline ob::OptimizationObjectivePtr getPathLengthObjective(const ob::SpaceInformationPtr& si)
-{
-    return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(si));
-}
-
-
-
-class ompl_planner {
-    using PATH = pair<vector<float>, vector<float>>;
-public:
-    ompl_planner(const vector<float> &stat, const vector<float> &goal);
-    void setup(ObstclesPtr obstacles);
-    PATH get_solution(DatasetPtr dataset, int depth);
-//    static Eigen::VectorXd vectorField(const ompl::base::State *qnear);
-
-private:
-    vector<float> start_, goal_;
-    ob::ProblemDefinitionPtr pdef;
-    ob::SpaceInformationPtr si;
-
-
-};
 
 
 #endif //VFRRT_OMPL_PLANNER_H

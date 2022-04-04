@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "matplotlibcpp.h"
 #include "src/ompl_planner.h"
 #include "cassert"
@@ -56,6 +55,21 @@ int main(int argc, char * argv[]) {
     planner.setup(obstacles->get_ptr());
     auto res = planner.get_solution(datasetPtr, depth);
     plt::plot(res.first, res.second);
+    // show confidence
+    vector<float>upper, lower;
+    float ci = 1.96;
+    for (float i : res.second) {
+        upper.push_back(i + ci);
+        lower.push_back(i - ci);
+
+    }
+
+    std::map<string, string> keywords;
+    keywords["alpha"] = "0.4";
+    keywords["color"] = "grey";
+    keywords["hatch"] = "-";
+
+    plt::fill_between(res.first, upper, lower,  keywords);
     plt::show();
 
     return 0;

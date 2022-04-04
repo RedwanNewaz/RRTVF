@@ -3,7 +3,6 @@
 //
 
 #include "ompl_planner.h"
-
 #include <memory>
 #include <utility>
 
@@ -53,7 +52,8 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
     auto U = dataset->retrieve_data(depth, UU);
     auto V = dataset->retrieve_data(depth, VV);
 
-
+    // here we generate vector field from the roms dataset. ROMS dataset has 1 km x 1 km resolution
+    // we need to convert sample point to integer indices of velocity vectors
     auto vectorField = [=](const ompl::base::State *qnear){
         auto qnear2D = qnear->as<ob::RealVectorStateSpace::StateType>();
 
@@ -93,8 +93,6 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
 
     auto res = pdef->getSolutionPath()->as<og::PathGeometric>();
 
-
-
     for(auto state: res->getStates())
     {
         const ob::RealVectorStateSpace::StateType* state2D =
@@ -108,5 +106,38 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
     }
 
     return solution;
+}
+
+ob::OptimizationObjectivePtr ompl_planner::getPathLengthObjective(const ompl::base::SpaceInformationPtr &si) {
+    return ob::OptimizationObjectivePtr(new ob::PathLengthOptimizationObjective(si));
+}
+
+ValidityChecker::ValidityChecker(const ompl::base::SpaceInformationPtr &si, ObstclesPtr obstacles)  :
+        ob::StateValidityChecker(si), obstacles_(std::move(obstacles)) {
+
+}
+
+
+bool ValidityChecker::isValid(const ob::State *state) const {
+    const auto* state2D =
+            state->as<ob::RealVectorStateSpace::StateType>();
+    auto x = (float) state2D->values[0];
+    auto y = (float) state2D->values[1];
+    return obstacles_->isValidState(x, y);
+}
+
+double ValidityChecker::clearance(const ob::State *state) const {
+    // We know we're working with a RealVectorStateSpace in this
+    // example, so we downcast state into the specific type.
+    const ob::RealVectorStateSpace::StateType* state2D =
+            state->as<ob::RealVectorStateSpace::StateType>();
+
+    // Extract the robot's (x,y) position from its state
+    double x = state2D->values[0];
+    double y = state2D->values[1];
+
+    // Distance formula between two points, offset by the circle's
+    // radius
+    return sqrt((x-0.5)*(x-0.5) + (y-0.5)*(y-0.5)) - 0.25;
 }
 

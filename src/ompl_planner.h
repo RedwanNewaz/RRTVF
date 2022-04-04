@@ -44,16 +44,11 @@ public:
     // circular obstacle
     bool isValid(const ob::State* state) const
     {
-        const ob::RealVectorStateSpace::StateType* state2D =
+        const auto* state2D =
                 state->as<ob::RealVectorStateSpace::StateType>();
-        float x = state2D->values[0];
-        float y = state2D->values[1];
-
+        auto x = (float) state2D->values[0];
+        auto y = (float) state2D->values[1];
         return obstacles_->isValidState(x, y);
-
-//        bool inRegion = x >= 10 - 1 && x <= 15 + 1 && y >= 2 - 1 && y <= 15 + 1;
-//        return !inRegion;
-//        return this->clearance(state) > 0.0;
     }
 
     // Returns the distance from the given state's position to the

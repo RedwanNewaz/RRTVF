@@ -56,8 +56,11 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
 
     auto vectorField = [=](const ompl::base::State *qnear){
         auto qnear2D = qnear->as<ob::RealVectorStateSpace::StateType>();
-        auto qnear_u = U[int(qnear2D->values[0])][int(qnear2D->values[1])];
-        auto qnear_v = V[int(qnear2D->values[0])][int(qnear2D->values[1])];
+
+        int x = int(qnear2D->values[0]);
+        int y = int(qnear2D->values[1]);
+        auto qnear_u = U[y][x];
+        auto qnear_v = V[y][x];
         Eigen::VectorXd vfield(2);
         vfield << qnear_u, qnear_v;
         return vfield;
@@ -76,7 +79,7 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
 // planning time
     ob::PlannerStatus solved = optimizingPlanner->solve(2.0);
 
-    if(!solved) return {};
+    ompl_planner::PATH solution;
 
     // Output the length of the path found
     std::cout
@@ -91,7 +94,7 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
     auto res = pdef->getSolutionPath()->as<og::PathGeometric>();
 
 
-    ompl_planner::PATH solution;
+
     for(auto state: res->getStates())
     {
         const ob::RealVectorStateSpace::StateType* state2D =
@@ -103,6 +106,7 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
         solution.second.push_back(y);
 
     }
+
     return solution;
 }
 

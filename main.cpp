@@ -65,8 +65,7 @@ int main(int argc, char * argv[]) {
 
     planner.setup(obstacles->get_ptr());
     auto res = planner.get_solution(datasetPtr, depth);
-    if(res.first.size())
-        plt::plot(res.first, res.second);
+    plt::plot(res.first, res.second);
     plt::show();
 
     return 0;

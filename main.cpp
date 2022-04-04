@@ -38,7 +38,7 @@ int main(int argc, char * argv[]) {
 
     assert(argc > 1 && "filepath not found in args");
 
-    auto params = make_shared<param_parser>("../resources/config.yaml");
+    auto params = make_shared<param_parser>(argv[1]);
 
     cout << *params << endl;
 

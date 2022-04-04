@@ -9,6 +9,7 @@
 #include <netcdf>
 #include <vector>
 #include <memory>
+#include "param_parser.h"
 
 using namespace std;
 using namespace netCDF;
@@ -25,7 +26,7 @@ typedef shared_ptr<dataset_parser> DatasetPtr;
 
 class dataset_parser: public enable_shared_from_this<dataset_parser>{
 public:
-    dataset_parser(const char *filepath);
+    dataset_parser(ParamPtr params);
     /*
      * read netcdf variable from the filepath
      * see examples in https://github.com/Unidata/netcdf-cxx4
@@ -40,9 +41,11 @@ public:
      */
     vector<vector<float>> retrieve_data(int depth_indx, const ROMS_VAR& type);
 
+    ParamPtr params;
+
 private:
 
-    const char *filepath_;
+    string filepath_;
     float latsIn_[25][25];
     float lonsIn_[25][25];
     float veloU_[12][25][25];

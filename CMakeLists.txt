@@ -21,7 +21,8 @@ include_directories(
         include
         /usr/local/include)
 
-add_executable(VFRRT main.cpp src/dataset_parser.cpp src/dataset_parser.h src/ompl_planner.cpp src/ompl_planner.h src/polygonal_obstacles.cpp src/polygonal_obstacles.h)
+CPMAddPackage("gh:jbeder/yaml-cpp#yaml-cpp-0.6.3@0.6.3")
+add_executable(VFRRT main.cpp src/dataset_parser.cpp src/dataset_parser.h src/ompl_planner.cpp src/ompl_planner.h src/polygonal_obstacles.cpp src/polygonal_obstacles.h src/param_parser.cpp src/param_parser.h)
 target_link_libraries(${PROJECT_NAME}
         ${OMPL_LIBRARY}
         ${OMPLAPP_LIBRARY}
@@ -29,4 +30,5 @@ target_link_libraries(${PROJECT_NAME}
         netcdf-cxx4
         -lpython3.8
         Eigen3::Eigen
+        yaml-cpp
         )

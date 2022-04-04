@@ -4,7 +4,11 @@
 
 #include "polygonal_obstacles.h"
 
-polygonal_obstacles::polygonal_obstacles() = default;
+polygonal_obstacles::polygonal_obstacles(ParamPtr params):params(params)
+{
+    for(const auto& ob: params->get_obstacle_list())
+        append(ob.first, ob.second);
+}
 
 void polygonal_obstacles::append(const vector<float> &x, const vector<float> &y) {
 

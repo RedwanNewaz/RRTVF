@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 #include <numeric>
+#include "param_parser.h"
 using namespace std;
 
 class polygonal_obstacles;
@@ -27,11 +28,12 @@ class polygonal_obstacles: public enable_shared_from_this<polygonal_obstacles>{
         float y;
     };
 public:
-    polygonal_obstacles();
+    polygonal_obstacles(ParamPtr params);
     void append(const vector<float>&x, const vector<float>&y);
     ObstclesPtr get_ptr();
     bool isValidState(float x, float y);
     vector<OBS> get_obstacles();
+    ParamPtr params;
 
 private:
     vector<OBS> obstacles_;

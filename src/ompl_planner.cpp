@@ -13,16 +13,19 @@ void ompl_planner::setup(ObstclesPtr obstacles) {
 // planning in [0,1]x[0,1], a subset of R^2.
     ob::StateSpacePtr space(new ob::RealVectorStateSpace(2));
 
+
 // Set the bounds of space to be in [0,1].
-    space->as<ob::RealVectorStateSpace>()->setBounds(0.0, 25.0);
+    auto low = obstacles->params->get_min_index();
+    auto high = obstacles->params->get_max_index();
+    space->as<ob::RealVectorStateSpace>()->setBounds(low, high);
 
 // Construct a space information instance for this state space
-    si = std::make_shared<ob::SpaceInformation>(space);
+    si_ = std::make_shared<ob::SpaceInformation>(space);
 
 // Set the object used to check which states in the space are valid
-    si->setStateValidityChecker(ob::StateValidityCheckerPtr(new ValidityChecker(si, std::move(obstacles))));
+    si_->setStateValidityChecker(ob::StateValidityCheckerPtr(new ValidityChecker(si_, std::move(obstacles))));
 
-    si->setup();
+    si_->setup();
 
 // Set our robot's starting state to be the bottom-left corner of
 // the environment, or (0,0).
@@ -37,11 +40,11 @@ void ompl_planner::setup(ObstclesPtr obstacles) {
     goal->as<ob::RealVectorStateSpace::StateType>()->values[1] = goal_[1];
 
 // Create a problem instance
-    pdef = std::make_shared<ob::ProblemDefinition>(si);
+    pdef_ = std::make_shared<ob::ProblemDefinition>(si_);
 
 // Set the start and goal states
-    pdef->setStartAndGoalStates(start, goal);
-    pdef->setOptimizationObjective(getPathLengthObjective(si));
+    pdef_->setStartAndGoalStates(start, goal);
+    pdef_->setOptimizationObjective(getPathLengthObjective(si_));
 
 
 }
@@ -66,12 +69,14 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
         return vfield;
     };
 
-    // Construct our optimizing planner using the RRTstar algorithm.
-//    ob::PlannerPtr optimizingPlanner(new og::RRTstar(si));
-    ob::PlannerPtr optimizingPlanner(new og::VFRRT(si, vectorField, 0.75, 1, 300));
+    double exploration = dataset->params->get_exploration_const();
+    double initial_lambda = dataset->params->get_initial_lambda();
+    int update_freq = dataset->params->get_update_freq();
+
+    ob::PlannerPtr optimizingPlanner(new og::VFRRT(si_, vectorField, exploration, initial_lambda, update_freq));
 
 // Set the problem instance for our planner to solve
-    optimizingPlanner->setProblemDefinition(pdef);
+    optimizingPlanner->setProblemDefinition(pdef_);
 //    optimizingPlanner->setup();
 
 
@@ -85,13 +90,13 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
     std::cout
             << optimizingPlanner->getName()
             << " found a solution of length "
-            << pdef->getSolutionPath()->length()
+            << pdef_->getSolutionPath()->length()
             << " with an optimization objective value of "
-            << pdef->getSolutionPath()->cost(pdef->getOptimizationObjective()) << std::endl;
+            << pdef_->getSolutionPath()->cost(pdef_->getOptimizationObjective()) << std::endl;
 
-//    pdef->getSolutionPath()->print(cout);
+//    pdef_->getSolutionPath()->print(cout);
 
-    auto res = pdef->getSolutionPath()->as<og::PathGeometric>();
+    auto res = pdef_->getSolutionPath()->as<og::PathGeometric>();
 
     for(auto state: res->getStates())
     {

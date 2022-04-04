@@ -4,7 +4,9 @@
 
 #include "dataset_parser.h"
 
-dataset_parser::dataset_parser(const char *filepath) : filepath_(filepath) {}
+dataset_parser::dataset_parser(ParamPtr params) : params(params) {
+    filepath_ = params->get_dataset_path();
+}
 
 bool dataset_parser::open() {
     // Now read the data back in
@@ -12,7 +14,7 @@ bool dataset_parser::open() {
 
         // Open the file for read access
         netCDF::NcFile dataFile(filepath_, netCDF::NcFile::read);
-        cout <<"[Reading]: data from " <<filepath_ << endl;
+        cout <<"[dataset_parser]: data from " <<filepath_ << endl;
         // Store variables from nc file locally
         NcVar longitude, latitude, depth, U, V, time;
         longitude = dataFile.getVar("lon");

@@ -40,8 +40,8 @@ public:
 
 private:
     vector<float> start_, goal_;
-    ob::ProblemDefinitionPtr pdef;
-    ob::SpaceInformationPtr si;
+    ob::ProblemDefinitionPtr pdef_;
+    ob::SpaceInformationPtr si_;
 
 protected:
     // Returns a structure representing the optimization objective to use

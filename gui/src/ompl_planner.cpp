@@ -82,7 +82,8 @@ ompl_planner::PATH ompl_planner::get_solution(DatasetPtr dataset, int depth) {
 
 // attempt to solve the planning problem within one second of
 // planning time
-    ob::PlannerStatus solved = optimizingPlanner->solve(2.0);
+    float solve_time = dataset->params->get_solve_time();
+    ob::PlannerStatus solved = optimizingPlanner->solve(solve_time);
 
     ompl_planner::PATH solution;
 

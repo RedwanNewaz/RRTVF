@@ -70,3 +70,11 @@ int param_parser::get_min_index() {
 int param_parser::get_max_index() {
     return config_["Dataset"]["Index"]["high"].as<int>();
 }
+
+string param_parser::get_uu_file() {
+    return config_["Dataset"]["uu"].as<string>();
+}
+
+string param_parser::get_vv_file() {
+    return config_["Dataset"]["vv"].as<string>();
+}

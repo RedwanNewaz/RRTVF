@@ -34,7 +34,8 @@ public:
     int get_depth_index();
     int get_min_index();
     int get_max_index();
-
+    string get_uu_file();
+    string get_vv_file();
     friend ostream &operator<<(ostream &os, const param_parser &parser);
 
 private:

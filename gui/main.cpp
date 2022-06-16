@@ -51,27 +51,32 @@ int main(int argc, char * argv[]) {
     for(const auto& ob:obstacles->get_obstacles())
         plt::plot(ob.first, ob.second);
 
-    ompl_planner planner(params->get_start_loc(), params->get_goal_loca());
+    try {
+        ompl_planner planner(params->get_start_loc(), params->get_goal_loca());
 
 
-    planner.setup(obstacles->get_ptr());
-    auto res = planner.get_solution(datasetPtr->get_ptr(), depth);
-    plt::plot(res.first, res.second);
-    // show confidence
-    vector<float>upper, lower;
-    float ci = 1.96;
-    for (float i : res.second) {
-        upper.push_back(i + ci);
-        lower.push_back(i - ci);
+        planner.setup(obstacles->get_ptr());
+        auto res = planner.get_solution(datasetPtr->get_ptr(), depth);
+        plt::plot(res.first, res.second);
+        // show confidence
+        vector<float>upper, lower;
+        float ci = 1.96;
+        for (float i : res.second) {
+            upper.push_back(i + ci);
+            lower.push_back(i - ci);
 
+        }
     }
-
-    std::map<string, string> keywords;
-    keywords["alpha"] = "0.4";
-    keywords["color"] = "grey";
-    keywords["hatch"] = "-";
-
-    plt::fill_between(res.first, upper, lower,  keywords);
+    catch (std::exception& e)
+    {
+        cerr<< e.what() << endl;
+    }
+//    std::map<string, string> keywords;
+//    keywords["alpha"] = "0.4";
+//    keywords["color"] = "grey";
+//    keywords["hatch"] = "-";
+//
+//    plt::fill_between(res.first, upper, lower,  keywords);
     plt::show();
 
     return 0;

@@ -10,6 +10,7 @@
 #include <vector>
 #include <memory>
 #include "param_parser.h"
+#include "rapidcsv.h"
 
 using namespace std;
 using namespace netCDF;
@@ -40,6 +41,8 @@ public:
      * The water currents are represented using UU, VV variables
      */
     vector<vector<float>> retrieve_data(int depth_indx, const ROMS_VAR& type);
+
+    vector<vector<double>> read_csv_data(const rapidcsv::Document& doc, int m, int n);
 
     ParamPtr params;
 

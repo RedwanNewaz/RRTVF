@@ -6,6 +6,29 @@
 
 dataset_parser::dataset_parser(ParamPtr params) : params(params) {
     filepath_ = params->get_dataset_path();
+
+    int m, n;
+    m = n = 25;
+
+    rapidcsv::Document doc1(filepath_ + "/uu.csv" );
+    auto result = read_csv_data(doc1, m, n);
+    cout << result.size() << " x " << result[0].size() << endl;
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            veloU_[0][i][j] = result[i][j];
+        }
+    }
+
+    result.clear();
+    rapidcsv::Document doc2(filepath_ + "/vv.csv" );
+    cout << result.size() << " x " << result[0].size() << endl;
+    result = read_csv_data(doc2, m, n);
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            veloV_[0][i][j] = result[i][j];
+        }
+    }
+
 }
 
 bool dataset_parser::open() {
@@ -37,6 +60,7 @@ bool dataset_parser::open() {
 
     } catch (netCDF::exceptions::NcException &e) {
         std::cout << e.what() << std::endl;
+        std:: cout << "reading csv files" << std::endl;
         return false;
     }
 }
@@ -63,4 +87,17 @@ vector<vector<float>> dataset_parser::retrieve_data(int depth_indx, const ROMS_V
 
 DatasetPtr dataset_parser::get_ptr() {
     return shared_from_this();
+}
+
+
+vector<vector<double>> dataset_parser::read_csv_data(const rapidcsv::Document& doc, int m, int n)
+{
+    vector<vector<double>> result;
+    for(int i = 0; i < m; ++i)
+    {
+        std::vector<double> myvector = doc.GetRow<double>(i);
+        myvector.erase(myvector.begin() + n, myvector.end());
+        result.emplace_back(myvector);
+    }
+    return result;
 }

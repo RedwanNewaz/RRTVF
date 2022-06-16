@@ -10,7 +10,7 @@
 #include <vector>
 #include <memory>
 #include "param_parser.h"
-
+#include "rapidcsv.h"
 using namespace std;
 using namespace netCDF;
 
@@ -51,6 +51,19 @@ private:
     float veloU_[12][25][25];
     float veloV_[12][25][25];
 
+
+protected:
+    vector<vector<double>> read_csv_data(const rapidcsv::Document& doc, int m, int n)
+    {
+        vector<vector<double>> result;
+        for(int i = 0; i < m; ++i)
+        {
+            std::vector<double> myvector = doc.GetRow<double>(i);
+            myvector.erase(myvector.begin() + n, myvector.end());
+            result.emplace_back(myvector);
+        }
+        return result;
+    }
 };
 
 

@@ -37,7 +37,30 @@ bool dataset_parser::open() {
 
     } catch (netCDF::exceptions::NcException &e) {
         std::cout << e.what() << std::endl;
-        return false;
+        int m, n, d;
+        m = n = 25;
+        d = params->get_depth_index();
+        rapidcsv::Document doc1(filepath_ + "/" + params->get_uu_file() );
+        auto result = read_csv_data(doc1, m, n);
+        cout << result.size() << " x " << result[0].size() << endl;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                veloU_[d][i][j] = result[i][j];
+            }
+        }
+
+
+        rapidcsv::Document doc2(filepath_ + "/" + params->get_vv_file() );
+
+        auto result2 = read_csv_data(doc2, m, n);
+        cout << result2.size() << " x " << result2[0].size() << endl;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                veloV_[d][i][j] = result2[i][j];
+            }
+        }
+
+        return true;
     }
 }
 

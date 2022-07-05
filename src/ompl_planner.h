@@ -31,8 +31,9 @@ using namespace std;
 
 
 class ompl_planner {
-    using PATH = pair<vector<float>, vector<float>>;
+
 public:
+    using PATH = pair<vector<float>, vector<float>>;
     ompl_planner(const vector<float> &stat, const vector<float> &goal);
     void setup(ObstclesPtr obstacles);
     PATH get_solution(DatasetPtr dataset, int depth);

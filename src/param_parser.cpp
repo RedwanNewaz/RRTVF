@@ -78,3 +78,7 @@ string param_parser::get_uu_file() {
 string param_parser::get_vv_file() {
     return config_["Dataset"]["vv"].as<string>();
 }
+
+bool param_parser::nc_file() {
+    return config_["Dataset"]["nc_file"].as<bool>();;
+}

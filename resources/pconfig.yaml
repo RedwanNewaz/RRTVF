@@ -18,22 +18,21 @@ OMPL:
   solve_time: 3.0
 
 
-#Dataset:
-#  nc_file: false
-#  filepath: ../../resources
-#  depth: 8
-#  uu: uu.csv
-#  vv: vv.csv
-#  Index:
-#    low: 0
-#    high: 25
-#
 
 Dataset:
-  nc_file: true
-  filepath: ../../resources/ca_subCA_das_2020010103.nc
-  depth: 5
+  filepath: ../../resources
+  depth: 8
+  uu: puu.csv
+  vv: pvv.csv
   Index:
     low: 0
     high: 25
+
+
+#Dataset:
+#  filepath: ../../resources/ca_subCA_das_2020010103.nc
+#  depth: 5
+#  Index:
+#    low: 0
+#    high: 25
 

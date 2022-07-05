@@ -1,6 +1,6 @@
 #include <iostream>
 #include "matplotlibcpp.h"
-#include "src/ompl_planner.h"
+#include "../src/ompl_planner.h"
 #include "cassert"
 
 using namespace std;
@@ -12,7 +12,7 @@ DatasetPtr get_roms_data_vf(ParamPtr params)
     auto dataset = make_shared<dataset_parser>(params->get_ptr());
     int depth = params->get_depth_index();
 
-    if (dataset->open())
+    if (dataset->open(params->nc_file()))
     {
         std::vector<float> x, y, u, v;
         auto resU = dataset->retrieve_data(depth, UU);

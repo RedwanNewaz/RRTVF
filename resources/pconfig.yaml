@@ -20,6 +20,7 @@ OMPL:
 
 
 Dataset:
+  nc_file: false
   filepath: ../../resources
   depth: 8
   uu: puu.csv
@@ -30,6 +31,7 @@ Dataset:
 
 
 #Dataset:
+#  nc_file: false
 #  filepath: ../../resources/ca_subCA_das_2020010103.nc
 #  depth: 5
 #  Index:

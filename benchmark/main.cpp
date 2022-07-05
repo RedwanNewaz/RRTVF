@@ -49,16 +49,16 @@ double angleDiff(const ompl_planner::PATH & path, DatasetPtr dataset, int depth)
 
 
     }
-    return total / path.second.size();
+    return total;
 }
 
 static void BM_VanillaVFRRT(benchmark::State& state)
 {
-    auto config = "/home/redwan/CLionProjects/VFRRT/resources/config.yaml";
+    auto config = "../../resources/config.yaml";
     auto params = make_shared<param_parser>(config);
     auto datasetPtr = make_shared<dataset_parser>(params->get_ptr());
 
-    datasetPtr->open();
+    datasetPtr->open(params->nc_file());
     ompl_planner planner(params->get_start_loc(), params->get_goal_loca());
     auto obstacles = make_shared<polygonal_obstacles>(params->get_ptr());
     planner.setup(obstacles->get_ptr());
@@ -74,7 +74,7 @@ static void BM_VanillaVFRRT(benchmark::State& state)
 
 static void BM_DeepVFRRT(benchmark::State& state)
 {
-    auto config = "/home/redwan/CLionProjects/VFRRT/resources/pconfig.yaml";
+    auto config = "../../resources/pconfig.yaml";
     auto params = make_shared<param_parser>(config);
     auto datasetPtr = make_shared<dataset_parser>(params->get_ptr());
     datasetPtr->open(params->nc_file());
@@ -92,7 +92,7 @@ static void BM_DeepVFRRT(benchmark::State& state)
 
 
 }
-const int repeat = 10;
+const int repeat = 5;
 BENCHMARK(BM_VanillaVFRRT)->UseRealTime()->Repetitions(repeat)->Unit(benchmark::kMillisecond);
 BENCHMARK(BM_DeepVFRRT)->UseRealTime()->Repetitions(repeat)->Unit(benchmark::kMillisecond);
 

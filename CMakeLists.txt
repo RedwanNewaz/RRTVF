@@ -6,6 +6,9 @@ include(cmake/CPM.cmake)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
+set(ompl_INCLUDE_DIRS /usr/local/include/ompl-1.5)
+set(OMPL_LIBRARY /usr/local/lib/libompl.so)
+
 set(SOURCE_FILES
         ${PROJECT_SOURCE_DIR}/src/dataset_parser.cpp
         ${PROJECT_SOURCE_DIR}/src/dataset_parser.h
@@ -16,7 +19,6 @@ set(SOURCE_FILES
         ${PROJECT_SOURCE_DIR}/src/param_parser.cpp
         ${PROJECT_SOURCE_DIR}/src/param_parser.h
         )
-find_package(OMPL REQUIRED)
 include_directories(
         ${ompl_INCLUDE_DIRS}
         /usr/local/include
@@ -25,7 +27,7 @@ include_directories(
 
 option(BUILD_GUI "Build the gui library" ON)
 option(BUILD_LITE "Build the lite library" ON)
-option(BUILD_BENCHMARK "Build the gui library" ON)
+option(BUILD_BENCHMARK "Build the benchmark library" ON)
 
 
 if(BUILD_GUI)

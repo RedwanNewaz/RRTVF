@@ -92,7 +92,7 @@ static void BM_DeepVFRRT(benchmark::State& state)
 
 
 }
-const int repeat = 5;
+const int repeat = 10;
 BENCHMARK(BM_VanillaVFRRT)->UseRealTime()->Repetitions(repeat)->Unit(benchmark::kMillisecond);
 BENCHMARK(BM_DeepVFRRT)->UseRealTime()->Repetitions(repeat)->Unit(benchmark::kMillisecond);
 

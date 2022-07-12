@@ -10,6 +10,7 @@
 # OMPL_MINOR_VERSION - Minor version
 # OMPL_PATCH_VERSION - Patch version
 
+
 include(FindPackageHandleStandardArgs)
 
 # user can set OMPL_PREFIX to specify the prefix path of the OMPL library
